@@ -2,6 +2,7 @@ package com.ecommerce.service.jwt;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -60,9 +61,18 @@ public class JwtService {
                 .compact();
     }
 
+//    public boolean isTokenValid(String token, UserDetails userDetails) {
+//        final String username = extractUsername(token);
+//        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+//    }
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        } catch (JwtException e) {
+            // Invalid token
+            return false;
+        }
     }
 
     private boolean isTokenExpired(String token) {

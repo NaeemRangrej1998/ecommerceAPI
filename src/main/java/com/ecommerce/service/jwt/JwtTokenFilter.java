@@ -61,11 +61,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
+                else {
+                    // If token is not valid, return 401
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
             }
 
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
-            handlerExceptionResolver.resolveException(request, response, null, exception);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // Directly return 401 if any exception occurs
+            return;
+//            handlerExceptionResolver.resolveException(request, response, null, exception);
         }
     }
 }
