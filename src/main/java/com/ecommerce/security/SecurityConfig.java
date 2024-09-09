@@ -29,7 +29,7 @@ public class SecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    private CustomeUserDetailService uds;
+    private CustomeUserDetailService uds; //todo try to create custom
 
     private final PasswordEncoder passwordEncoder;
 
@@ -51,15 +51,18 @@ public class SecurityConfig {
         httpSecurity.csrf(csrf->csrf.disable())
                 .cors(cors->cors.disable())
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/user/login", "/user/register").permitAll()
+                        .requestMatchers("/auth/singin", "/auth/addUser").permitAll()
                         .anyRequest().authenticated()
                 )
+                //todo sessionManagement
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(Customizer.withDefaults());
+                //todo
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+//                .httpBasic(Customizer.withDefaults());
         return httpSecurity.build();
     }
+    //todo reamaining
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

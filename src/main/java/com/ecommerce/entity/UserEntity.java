@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name = "user")
 public class UserEntity implements UserDetails {
@@ -30,6 +30,7 @@ public class UserEntity implements UserDetails {
 
     @Column(name = "password", nullable = false)
     private String password;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

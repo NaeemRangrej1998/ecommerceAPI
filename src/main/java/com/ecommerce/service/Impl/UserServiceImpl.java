@@ -2,6 +2,7 @@ package com.ecommerce.service.Impl;
 
 import com.ecommerce.dto.LoginRequestDto;
 import com.ecommerce.dto.RegistrationDTO;
+import com.ecommerce.dto.response.UserInfoDTO;
 import com.ecommerce.entity.UserEntity;
 import com.ecommerce.exception.UserAlreadyExistsException;
 import com.ecommerce.exception.UserNotFoundException;
@@ -17,7 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +33,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public UserEntity loginUser(LoginRequestDto loginRequestDto) {
+    public UserEntity singIn(LoginRequestDto loginRequestDto) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequestDto.getEmail(),
@@ -45,6 +48,15 @@ public class UserServiceImpl implements UserService {
 //        loginRequest.setEmail(user.getEmail());
 //        loginRequest.setPassword(user.getPassword());
         return user;
+    }
+
+    @Override
+    public List<UserInfoDTO> getAllUsers() {
+        List<UserEntity> userEntity=userRepository.findAll();
+//        CONVERT To DTO
+        return userEntity.stream().map(this::mapToUserInfoDTO).collect(Collectors.toList());
+//        UserInfoDTO userInfoDTO=new UserInfoDTO();
+//        return null;
     }
 
 
@@ -69,5 +81,14 @@ public class UserServiceImpl implements UserService {
         registrationDTO.setEmail(savedUser.getEmail());
         registrationDTO.setPassword(passwordEncoder.encode(savedUser.getPassword()));
         return registrationDTO;
+    }
+
+    public UserInfoDTO mapToUserInfoDTO(UserEntity userEntity){
+        UserInfoDTO infoDTO=new UserInfoDTO();
+        infoDTO.setId(userEntity.getId());
+        infoDTO.setFirstName(userEntity.getFirstName());
+        infoDTO.setLastName(userEntity.getLastName());
+        infoDTO.setEmail(userEntity.getEmail());
+        return infoDTO;
     }
 }
