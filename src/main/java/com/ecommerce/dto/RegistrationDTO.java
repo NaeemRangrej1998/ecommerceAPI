@@ -3,7 +3,8 @@ package com.ecommerce.dto;
 import lombok.*;
 
 @ToString
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegistrationDTO {

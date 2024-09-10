@@ -1,6 +1,7 @@
 package com.ecommerce.security;
 
 import com.ecommerce.service.Impl.CustomeUserDetailService;
+import com.ecommerce.service.jwt.JwtAuthenticationEntryPoint;
 import com.ecommerce.service.jwt.JwtTokenFilter;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    private final JwtTokenFilter jwtTokenFilter;
+    private  JwtTokenFilter jwtTokenFilter;
+    private JwtAuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
     private CustomeUserDetailService uds; //todo try to create custom
@@ -50,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/singin", "/auth/addUser").permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex->ex.authenticationEntryPoint(authenticationEntryPoint))
                 //todo sessionManagement
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

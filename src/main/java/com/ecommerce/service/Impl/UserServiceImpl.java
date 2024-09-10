@@ -5,15 +5,15 @@ import com.ecommerce.dto.RegistrationDTO;
 import com.ecommerce.dto.response.JwtResponseDto;
 import com.ecommerce.dto.response.UserInfoDTO;
 import com.ecommerce.entity.UserEntity;
+import com.ecommerce.exception.CustomException;
 import com.ecommerce.exception.UserAlreadyExistsException;
 import com.ecommerce.exception.UserNotFoundException;
 import com.ecommerce.repository.UserRepository;
 import com.ecommerce.service.UserService;
-import com.ecommerce.service.jwt.JwtService;
 import com.ecommerce.service.jwt.JwtTokenProvider;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private final JwtService jwtService;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
 //        );
         UserEntity user = userRepository.getUserByEmail(loginRequestDto.getEmail()).orElseThrow(() -> new UserNotFoundException("User Not Found For This Email"));
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new UserNotFoundException("Password Not Correct");
+            throw new CustomException("Password Not Correct", HttpStatus.BAD_REQUEST);
         }
 //        LoginRequestDto loginRequest = new LoginRequestDto();
 //        loginRequest.setEmail(user.getEmail());
@@ -74,6 +73,7 @@ public class UserServiceImpl implements UserService {
         Optional<UserEntity> userByUsername = userRepository.getUserByEmail(userRegisterRequest.getEmail());
 
         if (userByUsername.isPresent()) {
+            System.out.println("userByUsername.isPresent() = " + userByUsername.isPresent());
             throw new UserAlreadyExistsException("User already  exists");
         }
         UserEntity user = new UserEntity();
@@ -88,7 +88,6 @@ public class UserServiceImpl implements UserService {
         registrationDTO.setFirstName(savedUser.getFirstName());
         registrationDTO.setLastName(savedUser.getLastName());
         registrationDTO.setEmail(savedUser.getEmail());
-        registrationDTO.setPassword(passwordEncoder.encode(savedUser.getPassword()));
         return registrationDTO;
     }
 

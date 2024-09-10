@@ -34,21 +34,18 @@ public class JwtTokenProvider {
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
-    @Autowired
-    private UserRepository userRepository;
-
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        System.out.println("bearerToken = " + bearerToken);
+//        System.out.println("bearerToken = " + bearerToken);
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7, bearerToken.length());
+            return bearerToken.substring(7);
         }
         if (bearerToken != null) {
             return bearerToken;
         }
         return bearerToken;
     }
-
+//todo symmetrickey
 
     public boolean isTokenValid(String token) {
         try {
@@ -63,12 +60,14 @@ public class JwtTokenProvider {
         }
     }
     public String getUsername(String token) {
-        return Jwts.parserBuilder()  // Use parserBuilder() instead of parser()
+        String subject = Jwts.parserBuilder()  // Use parserBuilder() instead of parser()
                 .setSigningKey(getSignInKey())  // Use getSignInKey() to get the signing key
                 .build()  // Build the parser
                 .parseClaimsJws(token)  // Parse the token
                 .getBody()  // Extract the body of the JWT
-                .getSubject();  // Get the subject (typically the username)
+                .getSubject();
+        System.out.println("subject = " + subject);
+        return subject;  // Get the subject (typically the username)
     }
 
     public JwtResponseDto createAccessToken(String username)  {
@@ -85,7 +84,7 @@ public class JwtTokenProvider {
 
     }
     public Authentication getAuthentication(String token) throws JsonProcessingException {
-        final String userEmail = getUsername(token);
+        String userEmail = getUsername(token);
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }

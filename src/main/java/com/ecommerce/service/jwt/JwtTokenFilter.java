@@ -15,22 +15,19 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.lang.NonNull;
 
 import java.io.IOException;
+
 //todo whole service will refactor
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
-    private final HandlerExceptionResolver handlerExceptionResolver;
+    private   HandlerExceptionResolver handlerExceptionResolver;
 
 //    private final JwtService jwtService;
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private  JwtTokenProvider jwtTokenProvider;
 
-    private final UserDetailsService userDetailsService;
-
-    public JwtTokenFilter(HandlerExceptionResolver handlerExceptionResolver, JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
+    public JwtTokenFilter(HandlerExceptionResolver handlerExceptionResolver, JwtTokenProvider jwtTokenProvider) {
         this.handlerExceptionResolver = handlerExceptionResolver;
-//        this.jwtService = jwtService;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -80,10 +77,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 ////            handlerExceptionResolver.resolveException(request, response, null, exception);
 //        }
         try {
-                    final String authHeader = req.getHeader("Authorization");
+            final String authHeader = req.getHeader("Authorization");
             System.out.println("token = " + authHeader);
-
-//            HttpServletResponse response = (HttpServletResponse) req;
             String token = jwtTokenProvider.resolveToken(req);
             System.out.println("token = " + token);
 
