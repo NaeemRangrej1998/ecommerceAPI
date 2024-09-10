@@ -3,6 +3,7 @@ package com.ecommerce.controller;
 import com.ecommerce.dto.LoginRequestDto;
 import com.ecommerce.dto.RegistrationDTO;
 import com.ecommerce.dto.response.ApiResponse;
+import com.ecommerce.dto.response.JwtResponseDto;
 import com.ecommerce.dto.response.LoginResponseDTO;
 import com.ecommerce.dto.response.UserInfoDTO;
 import com.ecommerce.entity.UserEntity;
@@ -34,14 +35,14 @@ public class UserController {
     @PostMapping("/singin")
     public ResponseEntity<ApiResponse> singInUser(@RequestBody LoginRequestDto loginRequestDto) {
         try {
-            UserEntity authenticatedUser = userService.singIn(loginRequestDto);
+            JwtResponseDto jwtResponseDto = userService.singIn(loginRequestDto);
+            System.out.println("jwtResponseDto.getToken() = " + jwtResponseDto.getToken());
+//            String jwtToken = jwtService.generateToken(authenticatedUser);
 
-            String jwtToken = jwtService.generateToken(authenticatedUser);
-
-            LoginResponseDTO loginResponse = new LoginResponseDTO();
-            loginResponse.setToken(jwtToken);
-            loginResponse.setExpiresIn(jwtService.getExpirationTime());
-            return ResponseEntity.ok(new ApiResponse(HttpStatus.OK, "Sign in Success", loginResponse));
+//            LoginResponseDTO loginResponse = new LoginResponseDTO();
+//            loginResponse.setToken(jwtToken);
+//            loginResponse.setExpiresIn(jwtService.getExpirationTime());
+            return ResponseEntity.ok(new ApiResponse(HttpStatus.OK, "Sign in Success", jwtResponseDto));
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {

@@ -33,10 +33,6 @@ public class SecurityConfig {
 
     private final PasswordEncoder passwordEncoder;
 
-//    @Bean
-//    public BCryptPasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -63,8 +59,8 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
     //todo reamaining
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+//        return config.getAuthenticationManager();
+//    }
 }

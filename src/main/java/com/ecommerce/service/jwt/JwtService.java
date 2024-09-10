@@ -10,6 +10,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class JwtService {
 
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
+        System.out.println("bearerToken = " + bearerToken);
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7).trim();
         }
@@ -74,6 +76,7 @@ public class JwtService {
             UserDetails userDetails,
             long expiration
     ) {
+        System.out.println("userDetails = " + userDetails.getUsername());
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
@@ -103,7 +106,7 @@ public class JwtService {
         final String userEmail = extractUsername(token);
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 //        UserDetails userDetails = new User(getUsername(token), getUsername(token), true, false, false, false, grantedAuthorities);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null, Collections.emptyList());
     }
 
     private boolean isTokenExpired(String token) {

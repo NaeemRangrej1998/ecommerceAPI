@@ -2,19 +2,20 @@ package com.ecommerce.service.Impl;
 
 import com.ecommerce.dto.LoginRequestDto;
 import com.ecommerce.dto.RegistrationDTO;
+import com.ecommerce.dto.response.JwtResponseDto;
 import com.ecommerce.dto.response.UserInfoDTO;
 import com.ecommerce.entity.UserEntity;
 import com.ecommerce.exception.UserAlreadyExistsException;
 import com.ecommerce.exception.UserNotFoundException;
 import com.ecommerce.repository.UserRepository;
 import com.ecommerce.service.UserService;
+import com.ecommerce.service.jwt.JwtService;
+import com.ecommerce.service.jwt.JwtTokenProvider;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,18 +29,22 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    private final JwtService jwtService;
+
+    private final JwtTokenProvider jwtTokenProvider;
+
 
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
 
     @Override
-    public UserEntity singIn(LoginRequestDto loginRequestDto) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDto.getEmail(),
-                        loginRequestDto.getPassword()
-                )
-        );
+    public JwtResponseDto  singIn(LoginRequestDto loginRequestDto) {
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        loginRequestDto.getEmail(),
+//                        loginRequestDto.getPassword()
+//                )
+//        );
         UserEntity user = userRepository.getUserByEmail(loginRequestDto.getEmail()).orElseThrow(() -> new UserNotFoundException("User Not Found For This Email"));
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
             throw new UserNotFoundException("Password Not Correct");
@@ -47,7 +52,11 @@ public class UserServiceImpl implements UserService {
 //        LoginRequestDto loginRequest = new LoginRequestDto();
 //        loginRequest.setEmail(user.getEmail());
 //        loginRequest.setPassword(user.getPassword());
-        return user;
+        return getTokenResponse(user);
+    }
+
+    private JwtResponseDto getTokenResponse(UserEntity user) {
+            return jwtTokenProvider.createAccessToken(user.getEmail());
     }
 
     @Override
