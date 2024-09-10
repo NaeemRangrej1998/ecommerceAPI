@@ -27,14 +27,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    private  JwtTokenFilter jwtTokenFilter;
+    private JwtTokenFilter jwtTokenFilter;
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
     private CustomeUserDetailService uds; //todo try to create custom
 
     private final PasswordEncoder passwordEncoder;
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -46,15 +45,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(csrf->csrf.disable())
-                .cors(cors->cors.disable())
+        httpSecurity.csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/auth/singin", "/auth/addUser").permitAll()
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(ex->ex.authenticationEntryPoint(authenticationEntryPoint))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
                 //todo sessionManagement
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 //todo
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

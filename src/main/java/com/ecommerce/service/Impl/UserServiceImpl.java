@@ -4,13 +4,14 @@ import com.ecommerce.dto.LoginRequestDto;
 import com.ecommerce.dto.RegistrationDTO;
 import com.ecommerce.dto.response.JwtResponseDto;
 import com.ecommerce.dto.response.UserInfoDTO;
-import com.ecommerce.entity.UserEntity;
+
 import com.ecommerce.exception.CustomException;
 import com.ecommerce.exception.UserAlreadyExistsException;
 import com.ecommerce.exception.UserNotFoundException;
 import com.ecommerce.repository.UserRepository;
 import com.ecommerce.service.UserService;
 import com.ecommerce.service.jwt.JwtTokenProvider;
+import com.entity.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

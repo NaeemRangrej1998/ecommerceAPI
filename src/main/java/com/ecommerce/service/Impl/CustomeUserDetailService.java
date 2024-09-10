@@ -1,7 +1,7 @@
 package com.ecommerce.service.Impl;
 
-import com.ecommerce.entity.UserEntity;
 import com.ecommerce.repository.UserRepository;
+import com.entity.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
